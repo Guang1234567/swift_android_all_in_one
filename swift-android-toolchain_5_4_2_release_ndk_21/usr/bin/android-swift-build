@@ -1,0 +1,140 @@
+#!/bin/bash
+#
+# The MIT License
+#
+# Copyright (c) 2019 Volodymyr Gorlov (https://github.com/vgorloff)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+set -e
+
+SaNdkPath="/Users/lihanguang/dev_kit/sdk/android_sdk/ndk/21.4.7075529"
+SaNdkApi=23
+SaCurrentScriptName="$(basename ${BASH_SOURCE[0]})"
+SaCurrentScriptDirPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+if [[ $SHELL =~ "zsh" ]]; then
+	SaCurrentScriptDirPath=$(dirname $0:A)
+fi
+
+function usage {
+  echo ""
+  echo "Usage:"
+  echo "   $SaCurrentScriptName -target <target> [-v] [OPTIONS]"
+  echo ""
+  echo "   Where:"
+  echo ""
+  echo "   <target> Is one of the following:"
+  echo ""
+  echo "     - armv7-unknown-linux-android"
+  echo "     - aarch64-unknown-linux-android"
+  echo "     - i686-unknown-linux-android"
+  echo "     - x86_64-unknown-linux-android"
+  echo ""
+  echo "   -v Verbose mode."
+  echo ""
+  echo "   [OPTIONS] Other options for Swift build."
+  echo ""
+}
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -target)
+    SaArchTarget="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -v)
+    SaVerbose=YES
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [ -z "$SaArchTarget" ]; then
+  echo "The \"-target\" argument is not provided."
+  usage
+  exit 1
+fi
+
+if [ "$SaArchTarget" = "armv7-unknown-linux-android" ] || [ "$SaArchTarget" = "aarch64-unknown-linux-android" ] || [ "$SaArchTarget" = "i686-unknown-linux-android" ] || [ "$SaArchTarget" = "x86_64-unknown-linux-android" ]; then
+  true
+else
+  echo "Unknown target \"$SaArchTarget\""
+  usage
+  exit 1
+fi
+
+case $SaArchTarget in
+  armv7-unknown-linux-android)
+  SaNdkArch="arm-linux-androideabi"
+  ;;
+  aarch64-unknown-linux-android)
+  SaNdkArch="aarch64-linux-android"
+  ;;
+  i686-unknown-linux-android)
+  SaNdkArch="i686-linux-android"
+  ;;
+  x86_64-unknown-linux-android)
+  SaNdkArch="x86_64-linux-android"
+  ;;
+esac
+
+SaToolchainPath=$(cd "$(dirname "$SaCurrentScriptDirPath")/../"; pwd)
+SaSwiftCCmd="${SaToolchainPath}/usr/bin/swiftc-${SaNdkArch}"
+if [ ! -f "$SaCurrentScriptDirPath/swift" ]; then
+  SaToolchainPath="$(cd "$(dirname "$SaCurrentScriptDirPath")"; pwd)/ToolChain/swift-android-toolchain"
+  SaSwiftCCmd="$SaCurrentScriptDirPath/swiftc-${SaNdkArch}"
+fi
+
+SaNdkToolChain="${SaNdkPath}/toolchains/llvm/prebuilt/darwin-x86_64"
+
+SaSystemSwiftc=`xcrun --find swiftc`
+SaCmd="${SaToolchainPath}/usr/bin/swift build"
+SaCmdArgs="--triple $SaArchTarget --sdk ${SaToolchainPath} --toolchain ${SaNdkToolChain}/bin"
+SaCmdArgs="$SaCmdArgs -Xcc -I${SaNdkPath}/sysroot/usr/include"
+SaCmdArgs="$SaCmdArgs -Xcc -I${SaNdkPath}/sysroot/usr/include/${SaNdkArch}"
+
+if ! [[ $@ =~ "-D__ANDROID_API__" ]]; then
+   SaCmdArgs="$SaCmdArgs -Xcc -D__ANDROID_API__=$SaNdkApi"
+fi
+
+# Without next line, the Cpp code compilation may fail: See: https://github.com/vgorloff/swift-everywhere-toolchain/issues/89
+SaCmdArgs="$SaCmdArgs -Xcc -I${SaNdkToolChain}/sysroot/usr/include/c++/v1"
+
+if [ "$SaVerbose" = "YES" ]; then
+  # SaCmd="$SaCmd -Xswiftc -v"
+  echo export SWIFT_EXEC_MANIFEST=$SaSystemSwiftc
+  echo export SWIFT_EXEC=$SaSwiftCCmd
+  echo $SaCmd $SaCmdArgs "$@"
+fi
+
+export SWIFT_EXEC_MANIFEST=$SaSystemSwiftc # Still using system Swift compiler to parse package description.
+export SWIFT_EXEC=$SaSwiftCCmd
+$SaCmd $SaCmdArgs "$@"

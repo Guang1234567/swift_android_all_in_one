@@ -1,0 +1,60 @@
+[submodule "IDE/swift-android-gradle"]
+	path = IDE/swift-android-gradle
+	url = git@github.com:Guang1234567/swift-android-gradle.git
+[submodule "maven_repos"]
+	path = maven_repos
+	url = git@github.com:Guang1234567/maven_repos.git
+[submodule "example/swift-android-architecture"]
+	path = example/swift-android-architecture
+	url = git@github.com:Guang1234567/swift-android-architecture.git
+[submodule "library/swift-java-codegen"]
+	path = library/swift-java-codegen
+	url = git@github.com:readdle/swift-java-codegen.git
+[submodule "library/swift-nio"]
+	path = library/swift-nio
+	url = git@github.com:Guang1234567/swift-nio.git
+[submodule "library/swift-nio-ssl"]
+	path = library/swift-nio-ssl
+	url = git@github.com:Guang1234567/swift-nio-ssl.git
+[submodule "library/Swift_Boost_Context"]
+	path = library/Swift_Boost_Context
+	url = git@github.com:Guang1234567/Swift_Boost_Context.git
+[submodule "library/Swift_Coroutine"]
+	path = library/Swift_Coroutine
+	url = git@github.com:Guang1234567/Swift_Coroutine.git
+[submodule "library/Swift_Coroutine_NIO2"]
+	path = library/Swift_Coroutine_NIO2
+	url = git@github.com:Guang1234567/Swift_Coroutine_NIO2.git
+[submodule "library/Swift_Express"]
+	path = library/Swift_Express
+	url = git@github.com:Guang1234567/Swift_Express.git
+[submodule "library/console-kit"]
+	path = library/console-kit
+	url = git@github.com:Guang1234567/console-kit.git
+[submodule "library/SwiftLine"]
+	path = library/SwiftLine
+	url = git@github.com:Guang1234567/SwiftLine.git
+[submodule "library/Swift_QuickCheck"]
+	path = library/Swift_QuickCheck
+	url = git@github.com:Guang1234567/Swift_QuickCheck.git
+[submodule "library/SwiftThreadLocal"]
+	path = library/SwiftThreadLocal
+	url = git@github.com:Guang1234567/SwiftThreadLocal.git
+[submodule "library/SQLite.swift.android"]
+	path = library/SQLite.swift.android
+	url = git@github.com:Guang1234567/SQLite.swift.android.git
+[submodule "library/Swift_Rainbow"]
+	path = library/Swift_Rainbow
+	url = git@github.com:Guang1234567/Swift_Rainbow.git
+[submodule "library/RxSwift"]
+	path = library/RxSwift
+	url = git@github.com:Guang1234567/RxSwift.git
+[submodule "library/swift-backtrace"]
+	path = library/swift-backtrace
+	url = git@github.com:Guang1234567/swift-backtrace.git
+[submodule "library/swift-android-trace"]
+	path = library/swift-android-trace
+	url = git@github.com:Guang1234567/swift-android-trace.git
+[submodule "library/swift-android-logcat"]
+	path = library/swift-android-logcat
+	url = git@github.com:Guang1234567/swift-android-logcat.git

@@ -1,0 +1,12 @@
+
+-ldl
+-lpthread
+-lswiftCore
+-licui18nswift
+-licuucswift
+-licudataswift
+-lstdc++
+-lm
+-Xlinker -export-dynamic
+-Xlinker --exclude-libs
+-Xlinker ALL
