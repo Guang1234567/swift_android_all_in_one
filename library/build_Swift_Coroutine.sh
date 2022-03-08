@@ -25,6 +25,7 @@ ${SWIFT_ANDROID_HOME}/build-tools/1.9.7-swift5.4/swift-build --configuration deb
 echo -e "\n\n\nCopy ELF to real android device :\n_______________________________________\n"
 
 adb push .build/aarch64-unknown-linux-android/debug/Example /data/local/tmp
+adb push .build/aarch64-unknown-linux-android/debug/*.so /data/local/tmp
 
 echo -e "\n\n\nCopy swift runtime SO to real android device :\n_______________________________________\n"
 
